@@ -128,6 +128,13 @@ struct netns_ipv4 {
 	int sysctl_tcp_sack;
 	int sysctl_tcp_window_scaling;
 	int sysctl_tcp_timestamps;
+	int sysctl_tcp_default_init_rwnd;
+        int sysctl_tcp_early_retrans;
+        int sysctl_tcp_fastopen;
+        spinlock_t tcp_fastopen_ctx_lock;
+        int sysctl_tcp_fastopen_blackhole_timeout;
+        atomic_t tfo_active_disable_times;
+        struct tcp_congestion_ops *tcp_congestion_control;
 	struct inet_timewait_death_row tcp_death_row;
 	int sysctl_max_syn_backlog;
 

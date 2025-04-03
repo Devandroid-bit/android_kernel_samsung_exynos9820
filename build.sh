@@ -16,6 +16,7 @@ Usage: $(basename "$0") [options]
 Options:
     -m, --model [value]    Specify the model code of the phone
     -k, --ksu [y/N]        Include KernelSU
+    -c, --ccache [y/N]     Use ccache to cache compilations
 EOF
 }
 
@@ -27,6 +28,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --ksu|-k)
             KSU_OPTION="$2"
+            shift 2
+            ;;
+         --ccache|-c)
+            CCACHE_OPTION="$2"
             shift 2
             ;;
         *)\
@@ -41,15 +46,21 @@ echo "Preparing the build environment..."
 pushd $(dirname "$0") > /dev/null
 CORES=`cat /proc/cpuinfo | grep -c processor`
 
+if [[ "$CCACHE_OPTION" == "y" ]]; then
+    CCACHE=ccache
+fi
+
 # Define toolchain variables
 CLANG_DIR=$PWD/toolchain/clang-r416183b
 PATH=$CLANG_DIR/bin:$CLANG_DIR/lib:$PATH
 
 MAKE_ARGS="
+V=1
 ARCH=arm64 \
 LLVM=1 \
 LLVM_IAS=1 \
 CC=clang \
+CCACHE=$CCACHE \
 READELF=$CLANG_DIR/bin/llvm-readelf \
 O=out
 "
